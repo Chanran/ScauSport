@@ -24,7 +24,24 @@
                 <h4>各项成绩</h4>
                 <ul data-role="listview">
 					<?php foreach($data['scores'] as $score){?>
-						<li><?=$score['sportName']?>：<?=$score['score']?></li>
+						<li>
+							<?=$score['sportName']?>：
+							<?php
+								if(($score['sportid'] != 7 && $score['score'] == 0) || ($score['sportid'] == 7 && $score['score'] == -100)) echo '请补测';
+								else if($score['sortIndex'] >= 4 && $score['sortIndex'] <= 6){
+									$ms = $score['score'] % 1000;
+									$score['score'] = floor($score['score']/1000);
+									$s = $score['score'] % 60;
+									$score['score'] = floor($score['score']/60);
+									$m = $score['score'];
+									
+									if($m) echo $m . ' 分 ';
+									if($s) echo $s . ' 秒 ';
+									if($ms) echo $ms;
+								}
+								else echo $score['score'] . ' ' . $score['unit'];
+							?>
+						</li>
 					<?php }?>
                 </ul>
             </div>

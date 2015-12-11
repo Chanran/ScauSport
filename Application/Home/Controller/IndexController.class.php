@@ -3,6 +3,8 @@ namespace Home\Controller;
 
 use Think\Controller;
 
+require './Include/cs.php';
+
 class IndexController extends Controller{
     public function index(){
         $this->display();
@@ -26,8 +28,9 @@ class IndexController extends Controller{
     
     public function cache($account, $password){
         $cache = S('account_'.$account.'_'.$password);
+        $debug = false;
         
-        if($cache) return $cache;
+        if(!$debug && $cache) return $cache;
         else{
             $data = $this->request($account, $password);
             
@@ -103,7 +106,7 @@ class IndexController extends Controller{
         
         if($detail['code'] < 0) $this->error($detail['code'], $detail['message']);
         
-        //var_dump($body, $detail);
+        //var_dump($body, $detail);exit;
         return array_merge($body['data'], $detail['data']);
     }
     
