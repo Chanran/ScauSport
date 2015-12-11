@@ -24,5 +24,6 @@
             </form>
         </div><!-- /content -->
     </div><!-- /page -->
+	<?php echo '<img src="'._cnzzTrackPageView(1256947992).'" width="0" height="0"/>';?>
 </body>
 </html>

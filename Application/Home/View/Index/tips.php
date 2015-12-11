@@ -21,5 +21,6 @@
 			<a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all ui-btn-a">重试</a>
         </div><!-- /content -->
     </div><!-- /page -->
+	<?php echo '<img src="'._cnzzTrackPageView(1256947992).'" width="0" height="0"/>';?>
 </body>
 </html>
