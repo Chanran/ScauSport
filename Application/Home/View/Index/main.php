@@ -28,11 +28,8 @@
 						<li>
 							<?=$score['name']?>：
 							<?php
-								if(($score['id'] != 7 && $score['extObj']['bestSimpleScore']['originalScore'] == 0) || ($score['id'] == 7 && $score['extObj']['bestSimpleScore']['originalScore'] == -100)) echo '请补测';
-								else
-								{
 									$origin = $score['extObj']['bestSimpleScore']['originalScore'];
-									if($score['sortIndex'] >= 400 && $score['sortIndex'] <= 500){
+									if($score['sortIndex'] >= 400 && $score['sortIndex'] < 600){
 										$ms = $origin % 1000;
 										$tempScore = floor($origin/1000);
 										$s = $tempScore % 60;
@@ -43,15 +40,17 @@
 										if($m) echo $m . ' 分 ';
 										if($s) echo $s . ' 秒 ';
 										if($ms) echo $ms.' 毫秒';
-										echo "<span style='float:right'>评分：".$score['extObj']['bestSimpleScore']['score']."</span>";
 									} else {
-										echo $score['extObj']['bestSimpleScore']['originalScore'] . ' ' . $score['unit'];
-										if ($score['id'] == -2){
-											echo " (".$data['BMI']['levelText'].")";
-										}
-										echo "<span style='float:right'>评分：".$score['extObj']['bestSimpleScore']['score']."</span>";
+                                        if ($origin < 0 || $score['extObj']['bestSimpleScore']['score'] < 60 ){
+                                            echo "请补测!";
+                                        }else{
+
+                                            echo $origin . ' ' . $score['unit'];
+                                        }
+
 									}
-								}
+                                    echo " (".$score['extObj']['bestSimpleScore']['text'].")";
+                                    echo "<span style='float:right'>评分：".$score['extObj']['bestSimpleScore']['score']."</span>";
 
 
 							?>
