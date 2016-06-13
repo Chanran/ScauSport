@@ -12,34 +12,48 @@
 	<div data-role="page">
         <div role="main" class="ui-content">
             <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+
                 <h4>学生信息</h4>
                 <ul data-role="listview">
-                    <li>姓名：<?=$data['student']['name']?></li>
-                    <li>年级：<?=$data['classe']['gradeNumber']?>级</li>
-                    <li>专业：<?=$data['classe']['name']?></li>
+                    <li>姓名：<?=$data['student' ]['name']?></li>
+                    <li>年级：<?=$data['class']['grade']?>级</li>
+                    <li>专业：<?=$data['class']['name']?></li>
                 </ul>
             </div>
             
             <div data-role="collapsible" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                 <h4>各项成绩</h4>
                 <ul data-role="listview">
-					<?php foreach($data['scores'] as $score){?>
+					<?php foreach($data['sports'] as $score){?>
 						<li>
-							<?=$score['sportName']?>：
+							<?=$score['name']?>：
 							<?php
-								if(($score['sportid'] != 7 && $score['score'] == 0) || ($score['sportid'] == 7 && $score['score'] == -100)) echo '请补测';
-								else if($score['sortIndex'] >= 4 && $score['sortIndex'] <= 6){
-									$ms = $score['score'] % 1000;
-									$score['score'] = floor($score['score']/1000);
-									$s = $score['score'] % 60;
-									$score['score'] = floor($score['score']/60);
-									$m = $score['score'];
-									
-									if($m) echo $m . ' 分 ';
-									if($s) echo $s . ' 秒 ';
-									if($ms) echo $ms;
+								if(($score['id'] != 7 && $score['extObj']['bestSimpleScore']['originalScore'] == 0) || ($score['id'] == 7 && $score['extObj']['bestSimpleScore']['originalScore'] == -100)) echo '请补测';
+								else
+								{
+									$origin = $score['extObj']['bestSimpleScore']['originalScore'];
+									if($score['sortIndex'] >= 400 && $score['sortIndex'] <= 500){
+										$ms = $origin % 1000;
+										$tempScore = floor($origin/1000);
+										$s = $tempScore % 60;
+										$score['score'] = floor($tempScore/60);
+										$m = $score['score'];
+
+
+										if($m) echo $m . ' 分 ';
+										if($s) echo $s . ' 秒 ';
+										if($ms) echo $ms.' 毫秒';
+										echo "<span style='float:right'>评分：".$score['extObj']['bestSimpleScore']['score']."</span>";
+									} else {
+										echo $score['extObj']['bestSimpleScore']['originalScore'] . ' ' . $score['unit'];
+										if ($score['id'] == -2){
+											echo " (".$data['BMI']['levelText'].")";
+										}
+										echo "<span style='float:right'>评分：".$score['extObj']['bestSimpleScore']['score']."</span>";
+									}
 								}
-								else echo $score['score'] . ' ' . $score['unit'];
+
+
 							?>
 						</li>
 					<?php }?>

@@ -15,8 +15,8 @@
         </div><!-- /header -->
 
         <div role="main" class="ui-content">
-			<center><img src="/Public/logo.jpg"/></center>
-            <form method="post" action="/index.php/Home/Index/main">
+			<center><img src="__ROOT__/Public/logo.jpg"/></center>
+            <form method="get" action="__ROOT__/index.php/Home/Index/main">
                 <label for="account" class="ui-hidden-accessible">学号：</label>
                 <input type="number" name="account" placeholder="请输入学号" autofocus>
                 <label for="password" class="ui-hidden-accessible">四位生日：</label>

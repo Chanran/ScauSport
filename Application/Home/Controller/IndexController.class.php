@@ -11,6 +11,7 @@ class IndexController extends Controller{
     }
     
     public function main(){
+
         $account = I('account');
         $password = I('password');
         $day = $password % 100;
@@ -21,15 +22,18 @@ class IndexController extends Controller{
         }
         
         $data = $this->cache($account, md5($password));
-            
+
+//        echo dump($data);
+//        exit;
         $this->assign('data', $data);
+
         $this->display();
     }
     
     public function cache($account, $password){
         $cache = S('account_'.$account.'_'.$password);
         $debug = false;
-        
+
         if(!$debug && $cache) return $cache;
         else{
             $data = $this->request($account, $password);
@@ -41,36 +45,50 @@ class IndexController extends Controller{
     }
     
     public function request($account, $password){
-        $url = "http://163.177.153.150:8001/sport/api/useraccount/login?account={$account}&password={$password}";
+        $url = "http://api.youledong.com/n/userAccount/login?account={$account}&password={$password}";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_TIMEOUT, 20);
         curl_setopt($ch, CURLOPT_URL, $url);
         //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $FOLLOWLOCATION);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1); //设为TRUE在输出中包含头信息 
+        curl_setopt($ch, CURLOPT_HEADER, 1); //设为TRUE在输出中包含头信息
+
+        $header = array(
+            'Content-Type:'.'application/x-www-form-urlencoded;charset=UTF-8',
+            'Accept:'.'text/json'
+        );
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 
         //excute
         $results = curl_exec($ch);
+
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         list ($header, $body) = explode("\r\n\r\n", $results);
         
         $body = json_decode($body, true);
-        //var_dump($body);
-        
+
+        //登录之后需要的loginToken
+        $loginToken = $body['data']['loginToken'];
+
         if($body['code'] < 0) $this->error($body['code'], $body['message']);
+
 
         $isMatched = preg_match('/JSESSIONID=.*?;/', $header, $matches);
 
+
         $cookie=str_replace(';', '', $matches[0]);
 
-        $detailUrl='http://163.177.153.150:8001/sport/api/bodymeasure/info';
+        $detailUrl='http://api.youledong.com/n/bodymeasure/info';
 
         $ch = curl_init();    // 初始化CURL句柄 
         $user_agent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)";
-        
+
+        $postfield = 'loginToken='.$loginToken;
+
         curl_setopt($ch, CURLOPT_URL,$detailUrl);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postfield);
         curl_setopt($ch, CURLOPT_TIMEOUT, 20);
@@ -83,6 +101,8 @@ class IndexController extends Controller{
         curl_setopt($ch, CURLOPT_HEADER, false);
 
         $header = array(
+            'Content-Type:'.'application/x-www-form-urlencoded;charset=UTF-8',
+            'Accept:'.'text/json',
             "Referer: ".$detailUrl,
             'Accept-Language: zh-cn',
             'Connection: Keep-Alive',
@@ -101,9 +121,10 @@ class IndexController extends Controller{
         $detail = curl_exec($ch);
         
         curl_close($ch);
-        
+
         $detail = json_decode($detail, true);
         
+
         if($detail['code'] < 0) $this->error($detail['code'], $detail['message']);
         
         //var_dump($body, $detail);exit;
